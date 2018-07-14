@@ -1,25 +1,63 @@
-lines = open('small.in').readlines()
+lines = open('large.in').readlines()
 
-n = lines.pop(0)
+nps = int(lines.pop(0))
 sl = []
 kl = []
 for line in lines:
     splitline = line.split()
     sl.append(splitline[0])
-    kl.append(splitline[1])
+    kl.append(int(splitline[1]))
 
 def least_flips(s, k):
-    dists = {s:0}
+    final_dists = {}
+    current_dists = [(s, 0)]
+    while len(current_dists) is not 0:
+        current = current_dists.pop(0)
+        cs = current[0]       
+        cd = current[1]       
+        if cs in final_dists and cd < final_dists[cs]:
+            final_dists[cs] = cd
+        elif cs not in final_dists:
+            final_dists[cs] = cd
+            for n in range(len(cs) - k + 1):
+                current_dists.append((flip(cs, k, n), cd + 1))
+     
+    solution = '+' * len(s)
+    if solution not in final_dists:
+        return 'IMPOSSIBLE'
+    else:
+        return final_dists[solution]
 
-def flip(s, k, i):
-    if i > len(s) - k or i < 0:
-        raise ValueError('Invalid flip')
-
+def flip(s, k, n):
+    if n > len(s) - k or n < 0:
+        raise ValueError('Invalid flip ({}, {}, {})'.format(s, k, n))
     
+    fs = ''
+    for i, c in enumerate(s):
+        if i >= n and i < n + k:
+            fs += opposite(c)
+        else:
+            fs += c
 
-def replace_str_index(text,index=0,replacement=''):
-    return '%s%s%s'%(text[:index],replacement,text[index+1:])
+    return fs
+    
+def opposite(c):
+    if c is '+':
+        return '-'
+    
+    if c is '-':
+        return '+'
 
-print(n)
-print(sl)
-print(kl)
+    raise ValueError('Invalid pancake')
+
+for n in range(nps):
+    solution = least_flips(sl[n], kl[n])
+    print('Case #{}: {}'.format(n + 1, solution))
+
+
+
+
+
+
+
+
