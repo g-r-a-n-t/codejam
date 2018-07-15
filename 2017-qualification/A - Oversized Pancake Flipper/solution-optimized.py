@@ -11,24 +11,17 @@ for line in lines:
     kl.append(int(splitline[1]))
 
 def least_flips(s, k):
-    final_dists = {}
-    current_dists = [(s, 0)]
-    while len(current_dists) is not 0:
-        current = current_dists.pop(0)
-        cs = current[0]       
-        cd = current[1]       
-        if cs in final_dists and cd < final_dists[cs]:
-            final_dists[cs] = cd
-        elif cs not in final_dists:
-            final_dists[cs] = cd
-            for n in range(len(cs) - k + 1):
-                current_dists.append((flip(cs, k, n), cd + 1))
-     
-    solution = '+' * len(s)
-    if solution not in final_dists:
-        return 'IMPOSSIBLE'
-    else:
-        return final_dists[solution]
+    flips = 0
+    index = s.find('-')
+    while index <= len(s) - k:
+        if index == -1:
+            return flips
+
+        s = flip(s, k, index)
+        flips += 1
+        index = s.find('-')
+
+    return 'IMPOSSIBLE'
 
 def flip(s, k, n):
     if n > len(s) - k or n < 0:
